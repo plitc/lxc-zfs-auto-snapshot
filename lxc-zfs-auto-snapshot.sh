@@ -36,9 +36,10 @@
 
 ### stage0 // ###
 #
+## ZFS Pool Name: rpool/lxc
+#
 ## Common ZFS snapshot, exclude Database Container
 EXCLUDELXC="db|db2|db3"
-#
 #
 ## Database Server 1 - MySQL (db)
 MYSQLDBSRV1="db"
@@ -89,7 +90,7 @@ lxc-attach -n $MYSQLDBSRV1 -- mysql -h localhost -u $MYSQLDBSRVUSER1 -p$MYSQLDBS
 lxc-attach -n $POSTGRESQLDBSRV1 -- su -m $POSTGRESQLDBSRVUSER1 -c 'psql -c "SELECT PG_STOP_BACKUP();" postgres;'
 #
 #
-## PostgreSQL  - ZFS snapshot - LXC jabber
+## PostgreSQL  - ZFS snapshot - LXC (db2)
 echo "--- --- --- > PostgreSQL - LXC: $POSTGRESQLDBSRV2 ZFS snapshotting"
 lxc-attach -n $POSTGRESQLDBSRV2 -- su -m $POSTGRESQLDBSRVUSER2 -c 'psql -c "SELECT PG_START_BACKUP('\''zfs-auto-snapshot'\'', true)" postgres;'
 ## AUTOSNAP_DB - Database ZFS snapshot
@@ -99,7 +100,7 @@ zfs snapshot rpool/lxc/$POSTGRESQLDBSRV2@_AUTOSNAP_DB_"$DATE"
 lxc-attach -n $POSTGRESQLDBSRV2 -- su -m $POSTGRESQLDBSRVUSER2 -c 'psql -c "SELECT PG_STOP_BACKUP();" postgres;'
 #
 #
-## PostgreSQL  - ZFS snapshot - LXC wiki
+## PostgreSQL  - ZFS snapshot - LXC (db3)
 echo "--- --- --- > PostgreSQL - LXC: $POSTGRESQLDBSRV3 ZFS snapshotting"
 lxc-attach -n $POSTGRESQLDBSRV3 -- su -m $POSTGRESQLDBSRVUSER3 -c 'psql -c "SELECT PG_START_BACKUP('\''zfs-auto-snapshot'\'', true)" postgres;'
 ## AUTOSNAP_DB - Database ZFS snapshot
