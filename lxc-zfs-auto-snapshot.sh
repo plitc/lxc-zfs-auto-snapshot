@@ -49,19 +49,19 @@ MYSQLDBSRVPASSWD1="SECRET"
 ## Database Server 1 - PostgreSQL (db)
 POSTGRESQLDBSRV1="db"
 POSTGRESQLDBSRVUSER1="postgres"
-POSTGRESQLDBSRVPASSWD1=""
+#/ POSTGRESQLDBSRVPASSWD1=""
 #
 #
 ## Database Server 2 - PostgreSQL (db2)
 POSTGRESQLDBSRV2="db2"
 POSTGRESQLDBSRVUSER2="postgres"
-POSTGRESQLDBSRVPASSWD2=""
+#/ POSTGRESQLDBSRVPASSWD2=""
 #
 #
 ## Database Server 3 - PostgreSQL (db3)
 POSTGRESQLDBSRV3="db3"
 POSTGRESQLDBSRVUSER3="postgres"
-POSTGRESQLDBSRVPASSWD3=""
+#/ POSTGRESQLDBSRVPASSWD3=""
 #
 ### // stage0 ###
 
@@ -83,7 +83,7 @@ echo "--- --- --- > PostgreSQL - LXC: $POSTGRESQLDBSRV1 ZFS snapshotting"
 lxc-attach -n $POSTGRESQLDBSRV1 -- su -m $POSTGRESQLDBSRVUSER1 -c 'psql -c "SELECT PG_START_BACKUP('\''zfs-auto-snapshot'\'', true)" postgres;'
 ## AUTOSNAP_DB - Database ZFS snapshot
 lxc-attach -n $MYSQLDBSRV1 -- sync
-zfs snapshot rpool/lxc/$MYSQLDBSRV1@_AUTOSNAP_DB_$DATE
+zfs snapshot rpool/lxc/$MYSQLDBSRV1@_AUTOSNAP_DB_"$DATE"
 ## set Database online
 lxc-attach -n $MYSQLDBSRV1 -- mysql -h localhost -u $MYSQLDBSRVUSER1 -p$MYSQLDBSRVPASSWD1 -e "UNLOCK TABLES;"
 lxc-attach -n $POSTGRESQLDBSRV1 -- su -m $POSTGRESQLDBSRVUSER1 -c 'psql -c "SELECT PG_STOP_BACKUP();" postgres;'
@@ -94,7 +94,7 @@ echo "--- --- --- > PostgreSQL - LXC: $POSTGRESQLDBSRV2 ZFS snapshotting"
 lxc-attach -n $POSTGRESQLDBSRV2 -- su -m $POSTGRESQLDBSRVUSER2 -c 'psql -c "SELECT PG_START_BACKUP('\''zfs-auto-snapshot'\'', true)" postgres;'
 ## AUTOSNAP_DB - Database ZFS snapshot
 lxc-attach -n $POSTGRESQLDBSRV2 -- sync
-zfs snapshot rpool/lxc/$POSTGRESQLDBSRV2@_AUTOSNAP_DB_$DATE
+zfs snapshot rpool/lxc/$POSTGRESQLDBSRV2@_AUTOSNAP_DB_"$DATE"
 ## set Database online
 lxc-attach -n $POSTGRESQLDBSRV2 -- su -m $POSTGRESQLDBSRVUSER2 -c 'psql -c "SELECT PG_STOP_BACKUP();" postgres;'
 #
@@ -104,7 +104,7 @@ echo "--- --- --- > PostgreSQL - LXC: $POSTGRESQLDBSRV3 ZFS snapshotting"
 lxc-attach -n $POSTGRESQLDBSRV3 -- su -m $POSTGRESQLDBSRVUSER3 -c 'psql -c "SELECT PG_START_BACKUP('\''zfs-auto-snapshot'\'', true)" postgres;'
 ## AUTOSNAP_DB - Database ZFS snapshot
 lxc-attach -n $POSTGRESQLDBSRV3 -- sync
-zfs snapshot rpool/lxc/$POSTGRESQLDBSRV3@_AUTOSNAP_DB_$DATE
+zfs snapshot rpool/lxc/$POSTGRESQLDBSRV3@_AUTOSNAP_DB_"$DATE"
 ## set Database online
 lxc-attach -n $POSTGRESQLDBSRV3 -- su -m $POSTGRESQLDBSRVUSER3 -c 'psql -c "SELECT PG_STOP_BACKUP();" postgres;'
 #
@@ -115,7 +115,7 @@ lxc-attach -n $POSTGRESQLDBSRV3 -- su -m $POSTGRESQLDBSRVUSER3 -c 'psql -c "SELE
 #
 ## AUTOSNAP - Common ZFS snapshot
 echo "--- --- --- > ALL        - LXC: (exclude $EXCLUDELXC) ZFS snapshotting"
-lxc-ls --active | egrep -v "$EXCLUDELXC" | sed 's/^/rpool\/lxc\//' | xargs -L1 -I {} zfs snapshot {}@_AUTOSNAP_$DATE
+lxc-ls --active | egrep -v "$EXCLUDELXC" | sed 's/^/rpool\/lxc\//' | xargs -L1 -I {} zfs snapshot {}@_AUTOSNAP_"$DATE"
 #
 ### // stage3 ###
 
